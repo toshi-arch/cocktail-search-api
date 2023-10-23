@@ -1,0 +1,18 @@
+version: "3"
+services:
+  db:
+    build: ./dbserver
+    container_name: "liquor-mysql"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: liquor
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+    command: mysqld
+    volumes:
+      - ./dbserver/data:/var/lib/mysql
+      - ./dbserver/conf/my.cnf:/etc/my.cnf
+    ports:
+      - 3306:3306
