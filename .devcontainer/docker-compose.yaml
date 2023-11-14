@@ -1,16 +1,16 @@
 version: "3"
 services:
   web:
-    build: ./api
-    container_name: "requor-api"
+    build: .
+    container_name: "liquor-api-dev"
     volumes:
-      - ./api:/usr/src/api
+      - ../api:/usr/src/api
     ports:
       - "8080:8080"
     tty: true
   db:
-    build: ./dbserver
-    container_name: "liquor-mysql"
+    build: ../dbserver
+    container_name: "liquor-mysql-dev"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -20,7 +20,7 @@ services:
       TZ: 'Asia/Tokyo'
     command: mysqld
     volumes:
-      - ./dbserver/data:/var/lib/mysql
-      - ./dbserver/conf/my.cnf:/etc/my.cnf
+      - ../dbserver/data:/var/lib/mysql
+      - ../dbserver/conf/my.cnf:/etc/my.cnf
     ports:
       - 3306:3306

@@ -1,0 +1,15 @@
+{
+    "name": "liquor_api",
+    "dockerComposeFile": "docker-compose.yaml",
+    "workspaceFolder": "/usr/src/api",
+    "service": "web",
+    // "remoteUser": "docker",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "humao.rest-client",
+                "golang.Go"
+            ]
+        }
+    }
+}
