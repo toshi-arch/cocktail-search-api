@@ -11,7 +11,7 @@ services:
   db:
     build: ../dbserver
     container_name: "liquor-mysql-dev"
-    # restart: always
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: liquor
