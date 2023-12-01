@@ -2,7 +2,7 @@ version: "3"
 services:
   web:
     build: ./api
-    container_name: "requor-api"
+    container_name: "liquor-api"
     volumes:
       - ./api:/usr/src/api
     ports:
