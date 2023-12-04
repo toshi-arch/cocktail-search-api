@@ -1,17 +1,25 @@
-/*package main
+package main
 
 import (
 	"fmt"
 	"net/http"
+	//"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type User struct {
+type Cocktails struct {
 	gorm.Model
+	/*ID int `gorm:"primaryKey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`*/
+
 	Name string `json:"name"`
+	Alcohol int `json:"alcohol"`
+	Recipe string `json:"recipe"`
+
 }
 
 func gormConnect() *gorm.DB {
@@ -38,17 +46,16 @@ func main() {
 	defer db.Close()
 	db.LogMode(true)
 
-	// usersテーブルの全レコードを取得
-	users := []User{}
-	db.Find(&users) // 全レコード
+	// cocktailsテーブルの全レコードを取得
+	cocktails := []Cocktails{}
+	db.Find(&cocktails) // 全レコード
 
 	// サーバ立ち上げ
 	r := gin.Default()
 
-	r.GET("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, users)
+	r.GET("/cocktails", func(c *gin.Context) {
+		c.JSON(http.StatusOK, cocktails)
 	})
 
 	r.Run(":8080")
 }
-*/
