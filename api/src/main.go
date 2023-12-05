@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	//"time"
 
 
 	"github.com/gin-gonic/gin"
@@ -13,14 +12,10 @@ import (
 
 type Cocktails struct {
 	gorm.Model
-	/*ID int `gorm:"primaryKey"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`*/
 
 	Name string `json:"name"`
 	Alcohol int `json:"alcohol"`
 	Recipe string `json:"recipe"`
-
 }
 
 func gormConnect() *gorm.DB {
@@ -31,7 +26,7 @@ func gormConnect() *gorm.DB {
 	DBNAME := "liquor"
 	CONNECT := USER + ":" + PASS + "@" + PROTOCOL + "/" + DBNAME
 
-	db, err := gorm.Open(DBMS, CONNECT)
+	db, err := gorm.Open(DBMS, CONNECT + "?parseTime=true")
 
 	if err != nil {
 		panic(err.Error())
