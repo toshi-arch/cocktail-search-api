@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS ingredients_cocktails (
     unit int NOT NULL,
     created_at datetime NOT NULL default CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL default CURRENT_TIMESTAMP,
+    deleted_at datetime,
 
     PRIMARY KEY(id),
     FOREIGN KEY(ingredient_id) REFERENCES ingredients(id),
