@@ -2,8 +2,8 @@ GET http://localhost:8080/hello
 
 ###
 
-GET http://localhost:8080/cocktails
+//GET http://localhost:8080/cocktails
 
 ###
 
-GET http://localhost:8080/cocktail_details
+GET http://localhost:8080/cocktail/ジントニック

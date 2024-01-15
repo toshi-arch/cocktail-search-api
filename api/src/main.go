@@ -19,13 +19,13 @@ type Cocktails struct {
 
 type Ingredients struct {
 	gorm.Model
-
+	
 	Name    string `json:"ingredient_name"`
 	Type    int    `json:"type"`
 	Alcohol int    `json:"ingredient_alcohol"`
 }
 
-type Ingredients_Cocktails struct {
+type IngredientsCocktails struct {
 	gorm.Model
 
 	Ingredient_id int `json:"ingredient_id"`
@@ -35,13 +35,13 @@ type Ingredients_Cocktails struct {
 }
 
 type CocktailDetails struct {
-	CocktailName string
-	CocktailRecipe string
-	Ingredient []IngredientDetails
+	Name string
+	Recipe string
+	Ingredients []IngredientDetails
 }
 
 type IngredientDetails struct {
-	IngredientName string
+	Name string
 	Amount int
 	Unit int
 }
@@ -64,59 +64,51 @@ func gormConnect() *gorm.DB {
 }
 
 func main() {
-	// dbに接続
-	db := gormConnect()
-
-	defer db.Close()
-	db.LogMode(true)
-
-	// cocktailsテーブルの全レコードを取得
-	cocktails := []Cocktails{}
-	db.Find(&cocktails) // 全レコード
-
-	// ingredientsテーブルの全レコードを取得
-	ingredients := []Ingredients{}
-	db.Find(&ingredients) // 全レコード
-
-	// ingredients_cocktailsテーブルの全レコードを取得
-	ingredients_cocktails := []Ingredients_Cocktails{}
-	db.Find(&ingredients_cocktails) // 全レコード
-
-	//カクテル名の入力
-	fmt.Println("カクテル名を入力してください。")
-	var str string
-    fmt.Scan(&str)
-
-	//レシピの検索
-	x := new(CocktailDetails)
-	y := []IngredientDetails{}
-
-	for i1,v1 := range cocktails {
-		if cocktails[i1].Name == str {
-			x.CocktailName = v1.Name
-			x.CocktailRecipe = v1.Recipe
-			for _,v2 := range ingredients_cocktails {
-				if v1.ID == uint(v2.Cocktail_id) {
-					for _,v3 := range ingredients {
-						if int(v3.ID) == v2.Ingredient_id {
-							y1 := IngredientDetails{Amount: v2.Amount, Unit: v2.Unit, IngredientName: v3.Name}
-							y = append(y, y1)
-							x.Ingredient = y
-						}
-					}
-				}
-			}
-		}
-	}
-
 	// サーバ立ち上げ
 	r := gin.Default()
 
-	r.GET("/cocktails", func(c *gin.Context) {
-		c.JSON(http.StatusOK, cocktails)
-	})
+	r.GET("/cocktail/:cocktail_name", func(c *gin.Context) {
+		cocktail_name := c.Param("cocktail_name")
 
-	r.GET("/cocktail_details", func(c *gin.Context) {
+		// dbに接続
+		db := gormConnect()
+
+		defer db.Close()
+		db.LogMode(true)
+
+		x := new(CocktailDetails)
+		y := []IngredientDetails{}
+	
+		// cocktailsテーブルのレコードを取得
+		cocktails := []Cocktails{}
+		db.Select([]string{"id", "name", "recipe"}).
+		Where("Name = ?", cocktail_name).
+		Find(&cocktails)  //First(&cocktails)でもいいかも
+
+		x.Name = cocktails[0].Name
+		x.Recipe = cocktails[0].Recipe
+		
+		// ingredients_cocktailsテーブルのレコードを取得
+		ingredients_cocktails := []IngredientsCocktails{}
+		db.Select([]string{"ingredient_id", "amount", "unit"}).
+		Where("Cocktail_id = ?", int(cocktails[0].ID)).
+		Find(&ingredients_cocktails) 
+		 
+		for _,v := range ingredients_cocktails {
+			y1 := IngredientDetails{Amount: v.Amount, Unit: v.Unit}
+			y = append(y, y1)
+		}
+		
+		// ingredientsテーブルのレコードを取得
+		ingredients := []Ingredients{}
+		for i,v := range ingredients_cocktails {
+			db.Select([]string{"name"}).
+			Where("ID = ?", v.Ingredient_id).
+			Find(&ingredients)
+			y[i].Name = ingredients[0].Name	
+		}
+		x.Ingredients = y
+
 		c.JSON(http.StatusOK, x)
 	})
 
