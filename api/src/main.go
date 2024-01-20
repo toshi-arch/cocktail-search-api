@@ -19,7 +19,7 @@ type Cocktails struct {
 
 type Ingredients struct {
 	gorm.Model
-	
+
 	Name    string `json:"ingredient_name"`
 	Type    int    `json:"type"`
 	Alcohol int    `json:"ingredient_alcohol"`
@@ -29,21 +29,21 @@ type IngredientsCocktails struct {
 	gorm.Model
 
 	Ingredient_id int `json:"ingredient_id"`
-	Cocktail_id int `json:"cocktail_id"`
-	Amount int `json:"ingredient_amount"`
-	Unit   int `json:"ingredient_unit"`
+	Cocktail_id   int `json:"cocktail_id"`
+	Amount        int `json:"ingredient_amount"`
+	Unit          int `json:"ingredient_unit"`
 }
 
 type CocktailDetails struct {
-	Name string
-	Recipe string
+	Name        string
+	Recipe      string
 	Ingredients []IngredientDetails
 }
 
 type IngredientDetails struct {
-	Name string
+	Name   string
 	Amount int
-	Unit int
+	Unit   int
 }
 
 func gormConnect() *gorm.DB {
@@ -66,7 +66,6 @@ func gormConnect() *gorm.DB {
 func main() {
 	// サーバ立ち上げ
 	r := gin.Default()
-
 	r.GET("/cocktail/:cocktail_name", func(c *gin.Context) {
 		cocktail_name := c.Param("cocktail_name")
 
@@ -78,38 +77,43 @@ func main() {
 
 		x := new(CocktailDetails)
 		y := []IngredientDetails{}
-	
+
 		// cocktailsテーブルのレコードを取得
 		cocktails := []Cocktails{}
 		db.Select([]string{"id", "name", "recipe"}).
-		Where("Name = ?", cocktail_name).
-		Find(&cocktails)  //First(&cocktails)でもいいかも
+			Where("Name = ?", cocktail_name).
+			Find(&cocktails) //Firstでも可(当てはまるカクテルは今のところ１種類のみ)
 
-		x.Name = cocktails[0].Name
-		x.Recipe = cocktails[0].Recipe
-		
-		// ingredients_cocktailsテーブルのレコードを取得
-		ingredients_cocktails := []IngredientsCocktails{}
-		db.Select([]string{"ingredient_id", "amount", "unit"}).
-		Where("Cocktail_id = ?", int(cocktails[0].ID)).
-		Find(&ingredients_cocktails) 
-		 
-		for _,v := range ingredients_cocktails {
-			y1 := IngredientDetails{Amount: v.Amount, Unit: v.Unit}
-			y = append(y, y1)
-		}
-		
-		// ingredientsテーブルのレコードを取得
-		ingredients := []Ingredients{}
-		for i,v := range ingredients_cocktails {
-			db.Select([]string{"name"}).
-			Where("ID = ?", v.Ingredient_id).
-			Find(&ingredients)
-			y[i].Name = ingredients[0].Name	
-		}
-		x.Ingredients = y
+		if len(cocktails) == 0 {
+			c.String(http.StatusOK, "申し訳ございません。「%s」のレシピは分かりません。", cocktail_name)
+		} else {
+			x.Name = cocktails[0].Name
+			x.Recipe = cocktails[0].Recipe
 
-		c.JSON(http.StatusOK, x)
+			// ingredients_cocktailsテーブルのレコードを取得
+			ingredients_cocktails := []IngredientsCocktails{}
+			db.Select([]string{"ingredient_id", "amount", "unit"}).
+				Where("Cocktail_id = ?", int(cocktails[0].ID)).
+				Find(&ingredients_cocktails)
+
+			for _, v := range ingredients_cocktails {
+				y1 := IngredientDetails{Amount: v.Amount, Unit: v.Unit}
+				y = append(y, y1)
+			}
+
+			// ingredientsテーブルのレコードを取得
+			ingredients := []Ingredients{}
+			for i, v := range ingredients_cocktails {
+				db.Select([]string{"name"}).
+					Where("ID = ?", v.Ingredient_id).
+					Find(&ingredients)
+				y[i].Name = ingredients[0].Name
+			}
+			x.Ingredients = y
+
+			c.JSON(http.StatusOK, x)
+		}
+
 	})
 
 	r.Run(":8080")
