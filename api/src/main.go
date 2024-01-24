@@ -75,43 +75,32 @@ func main() {
 		defer db.Close()
 		db.LogMode(true)
 
-		x := new(CocktailDetails)
-		y := []IngredientDetails{}
+		cocktail_details := new(CocktailDetails)
+		ingredient_details := []IngredientDetails{}
 
 		// cocktailsテーブルのレコードを取得
-		cocktails := []Cocktails{}
-		db.Select([]string{"id", "name", "recipe"}).
+		target_cocktail := Cocktails{}
+
+		if err := db.Select([]string{"id", "name", "recipe"}).
 			Where("Name = ?", cocktail_name).
-			Find(&cocktails) //Firstでも可(当てはまるカクテルは今のところ１種類のみ)
-
-		if len(cocktails) == 0 {
-			c.String(http.StatusOK, "申し訳ございません。「%s」のレシピは分かりません。", cocktail_name)
+			First(&target_cocktail).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "申し訳ございません。そのレシピは存在しません。",
+			})
 		} else {
-			x.Name = cocktails[0].Name
-			x.Recipe = cocktails[0].Recipe
+			cocktail_details.Name = target_cocktail.Name
+			cocktail_details.Recipe = target_cocktail.Recipe
 
-			// ingredients_cocktailsテーブルのレコードを取得
-			ingredients_cocktails := []IngredientsCocktails{}
-			db.Select([]string{"ingredient_id", "amount", "unit"}).
-				Where("Cocktail_id = ?", int(cocktails[0].ID)).
-				Find(&ingredients_cocktails)
+			//IngredientDetailsの要素を取得
+			db.Table("ingredients").
+			Select("ingredients.name, ingredients_cocktails.amount, ingredients_cocktails.unit").
+			Where("Cocktail_id = ?", int(target_cocktail.ID)).
+			Joins("left join ingredients_cocktails on ingredients.id = ingredients_cocktails.ingredient_id").
+			Find(&ingredient_details)
 
-			for _, v := range ingredients_cocktails {
-				y1 := IngredientDetails{Amount: v.Amount, Unit: v.Unit}
-				y = append(y, y1)
-			}
+			cocktail_details.Ingredients = ingredient_details
 
-			// ingredientsテーブルのレコードを取得
-			ingredients := []Ingredients{}
-			for i, v := range ingredients_cocktails {
-				db.Select([]string{"name"}).
-					Where("ID = ?", v.Ingredient_id).
-					Find(&ingredients)
-				y[i].Name = ingredients[0].Name
-			}
-			x.Ingredients = y
-
-			c.JSON(http.StatusOK, x)
+			c.JSON(http.StatusOK, cocktail_details)
 		}
 
 	})
