@@ -17,8 +17,12 @@ func main() {
 	r := g.Group("")
 
 	{
-		r.GET("/cocktails", service.GetAll)
-		r.GET("/cocktail/:cocktail_name", service.GetOneCocktail)
+		r.GET("/cocktails", func(c *gin.Context) {
+			service.GetAll(c, db)
+		})
+		r.GET("/cocktail/:cocktail_name", func(c *gin.Context) {
+			service.GetOneCocktail(c, db)
+		})
 	}
 
 	g.Run(":8080")

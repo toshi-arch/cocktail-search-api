@@ -1,23 +1,25 @@
 package service
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 
 	"api/infra"
 	"api/model"
 )
 
-func GetAll(c *gin.Context) {
-	db := infra.GormConnect()
+func GetAll(c *gin.Context, db *gorm.DB) {
+	//db := infra.GormConnect()
 	cocktails := []model.Cocktails{}
 	infra.GetAll(db, &cocktails)
 
 	c.JSON(http.StatusOK, cocktails)
 }
 
-func GetOneCocktail(c *gin.Context) {
-	db := infra.GormConnect()
+func GetOneCocktail(c *gin.Context, db *gorm.DB) {
+	//db := infra.GormConnect()
 	cocktail_name := c.Param("cocktail_name")
 
 	cocktail_details := new(model.CocktailDetails)
