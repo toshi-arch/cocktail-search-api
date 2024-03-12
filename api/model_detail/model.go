@@ -1,12 +1,12 @@
 package model
 
-type CocktailDetails struct {
+type Cocktail struct {
 	Name        string
 	Recipe      string
-	Ingredients []IngredientDetails
+	Ingredients []Ingredient
 }
 
-type IngredientDetails struct {
+type Ingredient struct {
 	Name   string
 	Amount int
 	Unit   int

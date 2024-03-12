@@ -5,7 +5,6 @@ import (
 	"api/infra"
 	"api/repository"
 	"api/handler"
-
 )
 
 func main() {
@@ -14,15 +13,16 @@ func main() {
 	defer db.Close()
 	db.LogMode(true)
 
-	taskRepo := repository.NewTaskRepository(db)
-	taskHandler := handler.NewTaskhandler(taskRepo)
+	taskRepoCocktail := repository.NewCocktailRepository(db)
+	taskRepoIngredient := repository.NewIngredientRepository(db)
+	taskCocktailHandler := handler.NewCocktailHandler(taskRepoCocktail, taskRepoIngredient)
 	// サーバ立ち上げ
 	g := gin.Default()
 	r := g.Group("")
 
 	{
-		r.GET("/cocktails", taskHandler.GetAllCocktails)
-		r.GET("/cocktail/:cocktail_name", taskHandler.GetOneCocktail)
+		r.GET("/cocktails", taskCocktailHandler.GetAllCocktails)
+		r.GET("/cocktail/:cocktail_name", taskCocktailHandler.GetCocktail)
 	}
 
 	g.Run(":8080")
