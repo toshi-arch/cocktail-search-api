@@ -11,3 +11,12 @@ type Ingredient struct {
 	Amount int
 	Unit   int
 }
+
+type CocktailByIngredient struct {
+	IngredientName string
+	CocktailName []CocktailName
+}
+
+type CocktailName struct {
+	Name string
+}

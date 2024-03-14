@@ -1,10 +1,19 @@
 GET http://localhost:8080/hello
 ###
-
+//カクテル一覧
 GET http://localhost:8080/cocktails/
 ###
-
-GET http://localhost:8080/cocktail/ジン
+//材料一覧
+GET http://localhost:8080/ingredients/
 ###
-
+//特定のカクテル検索
 GET http://localhost:8080/cocktail/ジントニック
+###
+//特定の材料検索
+GET http://localhost:8080/ingredient/ドライジン
+
+###
+//エラーチェック
+GET http://localhost:8080/cocktail/hogehoge
+###
+GET http://localhost:8080/ingredient/hogehoge
