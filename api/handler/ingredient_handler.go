@@ -15,8 +15,8 @@ func NewIngredientHandler(repo_cocktail *repository.CocktailRepository, repo_ing
 	return &IngredientHandler{Repo_cocktail: repo_cocktail, Repo_ingredient: repo_ingredient}
 }
 
-func (h *IngredientHandler) GetAllIngredients(c *gin.Context) {
-	ingredients, err := h.Repo_ingredient.GetAllIngredients()
+func (h *IngredientHandler) GetIngredients(c *gin.Context) {
+	ingredients, err := h.Repo_ingredient.GetIngredients()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",

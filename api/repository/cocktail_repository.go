@@ -1,8 +1,8 @@
 package repository
 
 import (
-	model_database "api/model_database"
-	model_detail "api/model_detail"
+	modelDatabase "api/model_database"
+	modelDetail "api/model_detail"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -15,32 +15,22 @@ func NewCocktailRepository(db *gorm.DB) *CocktailRepository {
 	return &CocktailRepository{DB: db}
 }
 
-func (r *CocktailRepository) GetAllCocktails() (*[]model_database.Cocktails, error) {
-	cocktails := []model_database.Cocktails{}
+func (r *CocktailRepository) GetCocktails() (*[]modelDatabase.Cocktails, error) {
+	cocktails := []modelDatabase.Cocktails{}
 	err := r.DB.Find(&cocktails).Error
 	return &cocktails, err
 }
 
-func (r *CocktailRepository) GetCocktailByName(cocktail_name string) (*model_database.Cocktails, error) {
-	cocktail := model_database.Cocktails{}
+func (r *CocktailRepository) GetCocktailByName(cocktail_name string) (*modelDatabase.Cocktails, error) {
+	cocktail := modelDatabase.Cocktails{}
 	err := r.DB.Select([]string{"id", "name", "recipe"}).
 		Where("Name = ?", cocktail_name).
 		First(&cocktail).Error
 	return &cocktail, err
 }
 
-/*func (r *CocktailRepository) GetCocktailByIngredient(ingredient_id int) ([]model_detail.CocktailName, error) {
-	cocktails := []model_detail.CocktailName{}
-	err := r.DB.Table("cocktails").
-		Select("cocktails.name").
-		Where("Ingredient_id = ?", ingredient_id).
-		Joins("left join ingredients_cocktails on cocktails.id = ingredients_cocktails.cocktail_id").
-		Find(&cocktails).Error
-	return cocktails, err
-}*/
-
-func (r *CocktailRepository) GetCocktailByIngredient(ingredient_id int) ([]model_detail.CocktailName, error) {
-	cocktails := []model_detail.CocktailName{}
+func (r *CocktailRepository) GetCocktailByIngredient(ingredient_id int) ([]modelDetail.CocktailName, error) {
+	cocktails := []modelDetail.CocktailName{}
 	err := r.DB.Table("cocktails").
 		Select("cocktails.name").
 		Where("Ingredient_id = ?", ingredient_id).
