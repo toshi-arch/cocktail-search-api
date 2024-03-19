@@ -7,16 +7,16 @@ import (
 )
 
 type IngredientHandler struct {
-	Repo_cocktail   *repository.CocktailRepository
-	Repo_ingredient *repository.IngredientRepository
+	CocktailRepository   *repository.CocktailRepository
+	IngredientRepository *repository.IngredientRepository
 }
 
-func NewIngredientHandler(repo_cocktail *repository.CocktailRepository, repo_ingredient *repository.IngredientRepository) *IngredientHandler {
-	return &IngredientHandler{Repo_cocktail: repo_cocktail, Repo_ingredient: repo_ingredient}
+func NewIngredientHandler(cocktailRepository *repository.CocktailRepository, ingredientRepository *repository.IngredientRepository) *IngredientHandler {
+	return &IngredientHandler{CocktailRepository: cocktailRepository, IngredientRepository: ingredientRepository}
 }
 
 func (h *IngredientHandler) GetIngredients(c *gin.Context) {
-	ingredients, err := h.Repo_ingredient.GetIngredients()
+	ingredients, err := h.IngredientRepository.GetIngredients()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",

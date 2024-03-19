@@ -13,10 +13,10 @@ func main() {
 	defer db.Close()
 	db.LogMode(true)
 
-	repoCocktail := repository.NewCocktailRepository(db)
-	repoIngredient := repository.NewIngredientRepository(db)
-	cocktailHandler := handler.NewCocktailHandler(repoCocktail, repoIngredient)
-	ingredientHandler := handler.NewIngredientHandler(repoCocktail, repoIngredient)
+	cocktailRepository := repository.NewCocktailRepository(db)
+	ingredientRepository := repository.NewIngredientRepository(db)
+	cocktailHandler := handler.NewCocktailHandler(cocktailRepository, ingredientRepository)
+	ingredientHandler := handler.NewIngredientHandler(cocktailRepository, ingredientRepository)
 	// サーバ立ち上げ
 	g := gin.Default()
 	r := g.Group("")
@@ -24,7 +24,7 @@ func main() {
 	{
 		r.GET("/cocktails", cocktailHandler.GetCocktails)
 		r.GET("/cocktail/:cocktail_name", cocktailHandler.GetCocktailByName)
-		r.GET("/cocktails/:ingredient_name", cocktailHandler.GetCocktailByIngredient)
+		r.GET("/cocktails/:ingredient_name", cocktailHandler.GetCocktailNamesByIngredient)
 		r.GET("/ingredients", ingredientHandler.GetIngredients)
 	}
 

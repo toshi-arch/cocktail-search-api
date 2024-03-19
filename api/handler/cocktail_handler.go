@@ -8,16 +8,16 @@ import (
 )
 
 type CocktailHandler struct {
-	Repo_cocktail   *repository.CocktailRepository
-	Repo_ingredient *repository.IngredientRepository
+	CocktailRepository   *repository.CocktailRepository
+	IngredientRepository *repository.IngredientRepository
 }
 
-func NewCocktailHandler(repo_cocktail *repository.CocktailRepository, repo_ingredient *repository.IngredientRepository) *CocktailHandler {
-	return &CocktailHandler{Repo_cocktail: repo_cocktail, Repo_ingredient: repo_ingredient}
+func NewCocktailHandler(cocktailRepository *repository.CocktailRepository, ingredientRepository *repository.IngredientRepository) *CocktailHandler {
+	return &CocktailHandler{CocktailRepository: cocktailRepository, IngredientRepository: ingredientRepository}
 }
 
 func (h *CocktailHandler) GetCocktails(c *gin.Context) {
-	cocktails, err := h.Repo_cocktail.GetCocktails()
+	cocktails, err := h.CocktailRepository.GetCocktails()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",
@@ -28,10 +28,10 @@ func (h *CocktailHandler) GetCocktails(c *gin.Context) {
 }
 
 func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
-	cocktail_name := c.Param("cocktail_name")
+	cocktailName := c.Param("cocktail_name")
 
 	// cocktailsテーブルのレコードを取得
-	cocktail, err := h.Repo_cocktail.GetCocktailByName(cocktail_name)
+	cocktail, err := h.CocktailRepository.GetCocktailByName(cocktailName)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",
@@ -39,7 +39,7 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 		return
 	}
 	//IngredientDetailsの要素を取得
-	ingredient_detail, err := h.Repo_ingredient.GetIngredientsByCocktailId(int(cocktail.ID))
+	ingredient_detail, err := h.IngredientRepository.GetIngredientsByCocktailId(int(cocktail.ID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",
@@ -54,11 +54,11 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 	})
 }
 
-func (h *CocktailHandler) GetCocktailByIngredient(c *gin.Context) {
-	ingredient_name := c.Param("ingredient_name")
+func (h *CocktailHandler) GetCocktailNamesByIngredient(c *gin.Context) {
+	ingredientName := c.Param("ingredient_name")
 
 	// ingredientsテーブルのレコードを取得
-	ingredient, err := h.Repo_ingredient.GetIngredientByName(ingredient_name)
+	ingredient, err := h.IngredientRepository.GetIngredientByName(ingredientName)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。その材料は存在しません。",
@@ -66,7 +66,7 @@ func (h *CocktailHandler) GetCocktailByIngredient(c *gin.Context) {
 		return
 	}
 	//Cocktailsの要素を取得
-	cocktails, err := h.Repo_cocktail.GetCocktailByIngredient(int(ingredient.ID))
+	cocktails, err := h.CocktailRepository.GetCocktailByIngredient(int(ingredient.ID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。その材料は存在しません。",

@@ -21,19 +21,19 @@ func (r *CocktailRepository) GetCocktails() (*[]modelDatabase.Cocktails, error) 
 	return &cocktails, err
 }
 
-func (r *CocktailRepository) GetCocktailByName(cocktail_name string) (*modelDatabase.Cocktails, error) {
+func (r *CocktailRepository) GetCocktailByName(cocktailName string) (*modelDatabase.Cocktails, error) {
 	cocktail := modelDatabase.Cocktails{}
 	err := r.DB.Select([]string{"id", "name", "recipe"}).
-		Where("Name = ?", cocktail_name).
+		Where("Name = ?", cocktailName).
 		First(&cocktail).Error
 	return &cocktail, err
 }
 
-func (r *CocktailRepository) GetCocktailByIngredient(ingredient_id int) ([]modelDetail.CocktailName, error) {
+func (r *CocktailRepository) GetCocktailByIngredient(ingredientId int) ([]modelDetail.CocktailName, error) {
 	cocktails := []modelDetail.CocktailName{}
 	err := r.DB.Table("cocktails").
 		Select("cocktails.name").
-		Where("Ingredient_id = ?", ingredient_id).
+		Where("Ingredient_id = ?", ingredientId).
 		Joins("left join ingredients_cocktails on cocktails.id = ingredients_cocktails.cocktail_id").
 		Find(&cocktails).Error
 	return cocktails, err
