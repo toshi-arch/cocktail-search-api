@@ -1,10 +1,11 @@
 package handler
 
 import (
-	modelDetail "api/model_detail"
+	modelDetail "api/domain"
 	"api/repository"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CocktailHandler struct {
@@ -38,8 +39,8 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 		})
 		return
 	}
-	//IngredientDetailsの要素を取得
-	ingredient_detail, err := h.IngredientRepository.GetIngredientsByCocktailId(int(cocktail.ID))
+	//Ingredientの要素を取得
+	ingredients, err := h.IngredientRepository.GetIngredientsByCocktailId(int(cocktail.ID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。そのレシピは存在しません。",
@@ -50,7 +51,7 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 	c.JSON(http.StatusOK, modelDetail.Cocktail{
 		Name:        cocktail.Name,
 		Recipe:      cocktail.Recipe,
-		Ingredients: *ingredient_detail,
+		Ingredients: *ingredients,
 	})
 }
 

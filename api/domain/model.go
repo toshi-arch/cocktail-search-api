@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Cocktail struct {
 	Name        string

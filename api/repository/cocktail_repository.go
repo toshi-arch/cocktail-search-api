@@ -2,7 +2,7 @@ package repository
 
 import (
 	modelDatabase "api/model_database"
-	modelDetail "api/model_detail"
+	modelDetail "api/domain"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )

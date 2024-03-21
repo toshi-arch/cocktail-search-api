@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	modelDatabase "api/model_database"
-	modelDetail "api/model_detail"
+	modelDetail "api/domain"
 )
 
 type IngredientRepository struct {
@@ -30,11 +30,11 @@ func (r *IngredientRepository) GetIngredientByName(ingredientName string) (*mode
 }
 
 func (r *IngredientRepository) GetIngredientsByCocktailId(cocktailId int) (*[]modelDetail.Ingredient, error) {
-	ingredientDetail := []modelDetail.Ingredient{}
+	ingredient := []modelDetail.Ingredient{}
 	err := r.DB.Table("ingredients").
 		Select("ingredients.name, ingredients_cocktails.amount, ingredients_cocktails.unit").
 		Where("Cocktail_id = ?", cocktailId).
 		Joins("left join ingredients_cocktails on ingredients.id = ingredients_cocktails.ingredient_id").
-		Find(&ingredientDetail).Error
-	return &ingredientDetail, err
+		Find(&ingredient).Error
+	return &ingredient, err
 }
