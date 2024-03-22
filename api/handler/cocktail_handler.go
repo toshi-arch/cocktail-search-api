@@ -1,7 +1,7 @@
 package handler
 
 import (
-	modelDetail "api/domain"
+	"api/domain"
 	"api/repository"
 	"net/http"
 
@@ -48,7 +48,7 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, modelDetail.Cocktail{
+	c.JSON(http.StatusOK, domain.Cocktail{
 		Name:        cocktail.Name,
 		Recipe:      cocktail.Recipe,
 		Ingredients: *ingredients,
@@ -58,7 +58,7 @@ func (h *CocktailHandler) GetCocktailByName(c *gin.Context) {
 func (h *CocktailHandler) GetCocktailNamesByIngredient(c *gin.Context) {
 	ingredientName := c.Param("ingredient_name")
 
-	// ingredientsテーブルのレコードを取得
+	//ingredientsテーブルのレコードを取得
 	ingredient, err := h.IngredientRepository.GetIngredientByName(ingredientName)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -67,15 +67,15 @@ func (h *CocktailHandler) GetCocktailNamesByIngredient(c *gin.Context) {
 		return
 	}
 	//Cocktailsの要素を取得
-	cocktails, err := h.CocktailRepository.GetCocktailByIngredient(int(ingredient.ID))
+	cocktails, _ := h.CocktailRepository.GetCocktailByIngredient(int(ingredient.ID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
-			"message": "申し訳ございません。そのカクテルは存在しません。",
+			"message": "申し訳ございません。"+ ingredientName + "を材料に持つカクテルは存在しません。",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, modelDetail.CocktailByIngredient{
+	c.JSON(http.StatusOK, domain.CocktailByIngredient{
 		IngredientName: ingredient.Name,
 		CocktailName:   cocktails,
 	})

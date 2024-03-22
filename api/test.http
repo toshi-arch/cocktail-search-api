@@ -13,5 +13,13 @@ GET http://localhost:8080/cocktail/ジントニック
 GET http://localhost:8080/cocktails/ドライジン
 
 ###
-//エラーチェック
-GET http://localhost:8080/cocktail/hogehoge
+//エラーチェック(特定のカクテルなし)
+GET http://localhost:8080/cocktail/hoge
+
+###
+//エラーチェック(特定の材料なし)
+GET http://localhost:8080/cocktails/hogehoge
+
+###
+//エラーチェック(材料はあるが、それを使うカクテルなし　※カシス)
+GET http://localhost:8080/cocktails/カシス
