@@ -68,7 +68,7 @@ func (h *CocktailHandler) GetCocktailNamesByIngredient(c *gin.Context) {
 	}
 	//Cocktailsの要素を取得
 	cocktails, _ := h.CocktailRepository.GetCocktailByIngredient(int(ingredient.ID))
-	if err != nil {
+	if len(cocktails) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
 			"message": "申し訳ございません。"+ ingredientName + "を材料に持つカクテルは存在しません。",
 		})
