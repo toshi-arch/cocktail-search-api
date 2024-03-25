@@ -14,5 +14,7 @@ INSERT INTO ingredients (name, type, alcohol)VALUES
 ("ドライベルモット", 4, 17),
 ("カンパリ", 2, 25),
 ("グレナデンシロップ", 6, 0),
-("ライムジュース", 6, 0);
+("ライムジュース", 6, 0),
+("カシス", 2, 18);
+
 -- +migrate Down
