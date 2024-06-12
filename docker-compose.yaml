@@ -2,6 +2,8 @@ version: "3"
 services:
   web:
     build: ./api
+    networks:
+      - sample_network
     container_name: "liquor-api"
     volumes:
       - ./api:/usr/src/api
@@ -10,6 +12,8 @@ services:
     tty: true
   db:
     build: ./dbserver
+    networks:
+      - sample_network
     container_name: "liquor-mysql"
     restart: always
     environment:
@@ -24,3 +28,6 @@ services:
       - ./dbserver/conf/my.cnf:/etc/my.cnf
     ports:
       - 3306:3306
+
+networks:
+  sample_network:
